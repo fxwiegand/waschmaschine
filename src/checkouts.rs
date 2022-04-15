@@ -69,3 +69,27 @@ impl FromStr for Throw {
         })
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use std::collections::HashMap;
+    use std::str::FromStr;
+    use crate::Throw;
+
+    #[test]
+    fn test_checkouts() {
+        let checkouts: HashMap<u16, Throw> = include_str!("../checkouts.txt")
+            .lines()
+            .map(|l| l.trim().split_once(' ').unwrap())
+            .map(|(score, throw)| {
+                (
+                    u16::from_str(score).unwrap(),
+                    Throw::from_str(throw).unwrap(),
+                )
+            })
+            .collect();
+        for (score, throw) in checkouts {
+            assert_eq!(score, throw._score())
+        }
+    }
+}
