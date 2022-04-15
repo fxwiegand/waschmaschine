@@ -58,4 +58,12 @@ mod test {
         };
         assert_eq!(expected_checkout, response.into_json::<Throw>().unwrap());
     }
+
+    #[test]
+    fn test_checkout_api_bogey_number() {
+        let client = Client::tracked(rocket()).expect("valid rocket instance");
+        let response = client.get("/checkout/168").dispatch();
+        assert_eq!(response.status(), Status::Ok);
+        assert_eq!(None, response.into_json::<Throw>());
+    }
 }
