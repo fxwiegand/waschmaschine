@@ -1,4 +1,5 @@
 ![Rust](https://github.com/fxwiegand/waschmaschine/workflows/Rust/badge.svg)
+[![codecov](https://codecov.io/gh/fxwiegand/waschmaschine/branch/main/graph/badge.svg?token=RX8MBLC73T)](https://codecov.io/gh/fxwiegand/waschmaschine)
 
 # waschmaschine
 A darts checkout api written in rust
