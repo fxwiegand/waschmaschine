@@ -1,3 +1,5 @@
+![Rust](https://github.com/fxwiegand/waschmaschine/workflows/Rust/badge.svg)
+
 # waschmaschine
 A darts checkout api written in rust
 
