@@ -1,4 +1,5 @@
 use serde::Serialize;
+use std::collections::HashMap;
 use std::str::FromStr;
 
 #[derive(Serialize, Debug, Clone, PartialEq)]
@@ -70,24 +71,26 @@ impl FromStr for Throw {
     }
 }
 
+pub(crate) fn get_checkouts() -> HashMap<u16, Throw> {
+    include_str!("../checkouts.txt")
+        .lines()
+        .map(|l| l.trim().split_once(' ').unwrap())
+        .map(|(score, throw)| {
+            (
+                u16::from_str(score).unwrap(),
+                Throw::from_str(throw).unwrap(),
+            )
+        })
+        .collect()
+}
+
 #[cfg(test)]
 mod tests {
-    use crate::Throw;
-    use std::collections::HashMap;
-    use std::str::FromStr;
+    use crate::checkouts::get_checkouts;
 
     #[test]
     fn test_checkouts() {
-        let checkouts: HashMap<u16, Throw> = include_str!("../checkouts.txt")
-            .lines()
-            .map(|l| l.trim().split_once(' ').unwrap())
-            .map(|(score, throw)| {
-                (
-                    u16::from_str(score).unwrap(),
-                    Throw::from_str(throw).unwrap(),
-                )
-            })
-            .collect();
+        let checkouts = get_checkouts();
         for (score, throw) in checkouts {
             assert_eq!(score, throw._score())
         }
