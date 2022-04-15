@@ -87,7 +87,8 @@ pub(crate) fn get_checkouts() -> HashMap<u16, Throw> {
 
 #[cfg(test)]
 mod tests {
-    use crate::checkouts::get_checkouts;
+    use crate::checkouts::{get_checkouts, Dart, Region};
+    use std::str::FromStr;
 
     #[test]
     fn test_checkout_validity() {
@@ -95,5 +96,21 @@ mod tests {
         for (score, throw) in checkouts {
             assert_eq!(score, throw._score())
         }
+    }
+
+    #[test]
+    fn test_darts_from_str() {
+        assert_eq!(
+            Dart {
+                field: 20,
+                region: Region::Double
+            },
+            Dart::from_str("D20").unwrap()
+        )
+    }
+
+    #[test]
+    fn test_darts_from_str_err() {
+        assert!(Dart::from_str("Q20").is_err())
     }
 }
