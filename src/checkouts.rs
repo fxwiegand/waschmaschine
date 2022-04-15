@@ -72,9 +72,9 @@ impl FromStr for Throw {
 
 #[cfg(test)]
 mod tests {
+    use crate::Throw;
     use std::collections::HashMap;
     use std::str::FromStr;
-    use crate::Throw;
 
     #[test]
     fn test_checkouts() {
