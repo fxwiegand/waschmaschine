@@ -25,3 +25,37 @@ fn rocket() -> _ {
         .mount("/", routes![checkout])
         .manage(checkouts)
 }
+
+#[cfg(test)]
+mod test {
+    use super::rocket;
+    use crate::checkouts::Dart;
+    use crate::checkouts::Region;
+    use crate::Throw;
+    use rocket::http::Status;
+    use rocket::local::blocking::Client;
+
+    #[test]
+    fn test_checkout_api() {
+        let client = Client::tracked(rocket()).expect("valid rocket instance");
+        let response = client.get("/checkout/170").dispatch();
+        assert_eq!(response.status(), Status::Ok);
+        let expected_checkout = Throw {
+            darts: vec![
+                Dart {
+                    field: 20,
+                    region: Region::Triple,
+                },
+                Dart {
+                    field: 20,
+                    region: Region::Triple,
+                },
+                Dart {
+                    field: 25,
+                    region: Region::Double,
+                },
+            ],
+        };
+        assert_eq!(expected_checkout, response.into_json::<Throw>().unwrap());
+    }
+}

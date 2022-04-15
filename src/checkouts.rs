@@ -1,18 +1,19 @@
+use serde::Deserialize;
 use serde::Serialize;
 use std::collections::HashMap;
 use std::str::FromStr;
 
-#[derive(Serialize, Debug, Clone, PartialEq)]
-enum Region {
+#[derive(Deserialize, Serialize, Debug, Clone, PartialEq)]
+pub(crate) enum Region {
     Single,
     Double,
     Triple,
 }
 
-#[derive(Serialize, Debug, Clone, PartialEq)]
+#[derive(Deserialize, Serialize, Debug, Clone, PartialEq)]
 pub(crate) struct Dart {
-    field: u16,
-    region: Region,
+    pub(crate) field: u16,
+    pub(crate) region: Region,
 }
 
 impl Dart {
@@ -47,7 +48,7 @@ impl FromStr for Dart {
     }
 }
 
-#[derive(Serialize, Debug, Clone, PartialEq)]
+#[derive(Deserialize, Serialize, Debug, Clone, PartialEq)]
 pub(crate) struct Throw {
     pub(crate) darts: Vec<Dart>,
 }
@@ -89,7 +90,7 @@ mod tests {
     use crate::checkouts::get_checkouts;
 
     #[test]
-    fn test_checkouts() {
+    fn test_checkout_validity() {
         let checkouts = get_checkouts();
         for (score, throw) in checkouts {
             assert_eq!(score, throw._score())
