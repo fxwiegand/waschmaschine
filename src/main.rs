@@ -6,10 +6,10 @@ use crate::checkouts::{get_checkouts, Throw};
 extern crate rocket;
 
 use rocket::serde::json::Json;
-use rocket::{Request, Response, State};
+use rocket::{ State};
 use std::collections::HashMap;
-use rocket::fairing::{Fairing, Info, Kind};
-use rocket::http::Header;
+use rocket::http::{Method};
+use rocket_cors::{AllowedHeaders, AllowedOrigins};
 
 #[get("/checkout/<score>")]
 fn checkout(score: u16, state: &State<HashMap<u16, Throw>>) -> Json<Option<&Throw>> {
@@ -23,29 +23,23 @@ fn checkout(score: u16, state: &State<HashMap<u16, Throw>>) -> Json<Option<&Thro
 #[launch]
 fn rocket() -> _ {
     let checkouts = get_checkouts();
+
+    let allowed_origins = AllowedOrigins::all();
+
+    // You can also deserialize this
+    let cors = rocket_cors::CorsOptions {
+        allowed_origins,
+        allowed_methods: vec![Method::Get].into_iter().map(From::from).collect(),
+        allowed_headers: AllowedHeaders::some(&["Authorization", "Accept"]),
+        allow_credentials: true,
+        ..Default::default()
+    }
+        .to_cors().unwrap();
+
     rocket::build()
-        .attach(CORS)
         .mount("/", routes![checkout])
         .manage(checkouts)
-}
-
-pub struct CORS;
-
-#[rocket::async_trait]
-impl Fairing for CORS {
-    fn info(&self) -> Info {
-        Info {
-            name: "Add CORS headers to responses",
-            kind: Kind::Response
-        }
-    }
-
-    async fn on_response<'r>(&self, _request: &'r Request<'_>, response: &mut Response<'r>) {
-        response.set_header(Header::new("Access-Control-Allow-Origin", "*"));
-        response.set_header(Header::new("Access-Control-Allow-Methods", "POST, GET, PATCH, OPTIONS"));
-        response.set_header(Header::new("Access-Control-Allow-Headers", "*"));
-        response.set_header(Header::new("Access-Control-Allow-Credentials", "true"));
-    }
+        .attach(cors)
 }
 
 #[cfg(test)]
